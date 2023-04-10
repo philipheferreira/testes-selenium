@@ -1,0 +1,15 @@
+{
+  "name": "teste_selenium_javascript_2",
+  "version": "1.0.0",
+  "description": "segundo teste do programa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "philiphe",
+  "license": "ISC",
+  "dependencies": {
+    "chromedriver": "^111.0.0",
+    "selenium-webdriver": "^4.8.2"
+  }
+}
