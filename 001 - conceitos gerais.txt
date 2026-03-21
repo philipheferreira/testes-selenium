@@ -1,0 +1,24 @@
+Conceitos Fundamentais e Ações Comuns
+Agora que o básico funciona, vamos detalhar as operações mais importantes.
+
+1. Encontrando Elementos (Locators)
+Esta é a parte mais crítica. Você precisa encontrar os elementos na página (botões, campos de texto, etc.) para interagir com eles. Os métodos mais comuns são:
+
+By.id(): Pelo atributo id do elemento. (Ex: <input id="login">)
+By.name(): Pelo atributo name. (Ex: <input name="username">)
+By.className(): Pelo atributo class. (Ex: <div class="container">)
+By.cssSelector(): Usando um seletor CSS. É muito poderoso e flexível. (Ex: div.container > button#submit)
+By.xpath(): Usando uma expressão XPath. Também é muito poderoso, especialmente para elementos complexos. (Ex: //button[@type='submit'])
+By.linkText(): Para links, pelo texto exato. (Ex: <a>Clique Aqui</a>)
+By.partialLinkText(): Para links, por uma parte do texto.
+
+exemplo: 
+
+// Encontra um elemento com ID 'main-button'
+let botaoPrincipal = await driver.findElement(By.id('main-button'));
+
+// Encontra o primeiro elemento com a classe 'product-card'
+let primeiroProduto = await driver.findElement(By.className('product-card'));
+
+// Encontra um elemento usando um seletor CSS
+let precoProduto = await driver.findElement(By.css('.product-card .price'));

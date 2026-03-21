@@ -24,6 +24,12 @@ Importante: A partir da versão 4.6, a biblioteca selenium-webdriver gerencia o
 download do driver do navegador (como o chromedriver) automaticamente. Você não 
 precisa mais baixá-lo manualmente, o que facilita muito a vida!
 
+Passo 2: Seu Primeiro Teste Automatizado (Hello, World!)
 
+Vamos criar um teste simples que abre o Google, verifica o título da página e a fecha.
 
+Crie um arquivo na sua pasta do projeto.
 
+Volte ao terminal e execute o comando:
+
+node primeiro_teste.js
