@@ -2,7 +2,7 @@ const { Builder, By, until } = require('selenium-webdriver');
 const path = require('path');
 
 // URL do nosso arquivo local
-const URL = 'file://' + path.resolve(__dirname, 'index.html');
+const URL = 'file://' + path.resolve(__dirname, '../formulario.html');
 
 // Função auxiliar para esperar e obter o texto da mensagem
 async function obterMensagem(driver) {
