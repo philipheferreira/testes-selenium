@@ -22,3 +22,122 @@ let primeiroProduto = await driver.findElement(By.className('product-card'));
 
 // Encontra um elemento usando um seletor CSS
 let precoProduto = await driver.findElement(By.css('.product-card .price'));
+
+2. Interagindo com Elementos
+Depois de encontrar o elemento, você pode interagir com ele:
+
+element.click(): Clica no elemento.
+element.sendKeys(texto): Digita texto em um campo de input.
+element.clear(): Limpa o conteúdo de um campo de input.
+element.getText(): Obtém o texto visível do elemento.
+element.getAttribute('atributo'): Obtém o valor de um atributo (ex: value, href).
+3. Esperas (Waits) - A Forma Correta!
+Usar driver.sleep() é uma má prática, pois espera um tempo fixo, o que pode deixar o teste lento ou falhar se a página demorar mais que o esperado. A solução são as esperas explícitas.
+
+Uma espera explícita espera por uma condição específica ocorrer antes de prosseguir, por um tempo máximo determinado.
+
+const { until } = require('selenium-webdriver');
+
+// Espera até 10 segundos até que um elemento com ID 'welcome-message' esteja presente na página
+try {
+    let elementoBoasVindas = await driver.wait(until.elementLocated(By.id('welcome-message')), 10000);
+    
+    let textoBoasVindas = await elementoBoasVindas.getText();
+    console.log('Mensagem de boas-vindas:', textoBoasVindas);
+
+} catch (error) {
+    console.log('O elemento de boas-vindas não apareceu em 10 segundos.');
+}
+
+
+Condições comuns com until:
+
+until.elementLocated(locator): Espera o elemento existir no DOM.
+until.elementIsVisible(element): Espera o elemento estar visível.
+until.titleIs(titulo): Espera o título da página ser o especificado.
+until.titleContains(palavra): Espera o título conter uma palavra.
+Passo 4: Exemplo Prático e Completo (Teste de Login)
+Vamos criar um teste mais realista para um formulário de login fictício.
+
+Crie um arquivo teste_login.js:
+
+const { Builder, By, Key, until } = require('selenium-webdriver');
+
+async function testeDeLogin() {
+    const driver = await new Builder().forBrowser('chrome').build();
+    
+    try {
+        // Dados de teste
+        const URL = 'https://the-internet.herokuapp.com/login'; // Site de testes público
+        const USER = 'tomsmith';
+        const PASS = 'SuperSecretPassword!';
+        const MENSAGEM_SUCESSO_ESPERADA = 'You logged into a secure area!';
+
+        // 1. Abrir a página de login
+        await driver.get(URL);
+
+        // 2. Preencher o nome de usuário
+        await driver.findElement(By.id('username')).sendKeys(USER);
+
+        // 3. Preencher a senha
+        await driver.findElement(By.id('password')).sendKeys(PASS);
+
+        // 4. Clicar no botão de login
+        await driver.findElement(By.css('button[type="submit"]')).click();
+
+        // 5. Esperar a mensagem de sucesso aparecer e validá-la
+        // Usamos uma espera explícita para garantir que a mensagem esteja visível
+        let elementoMensagem = await driver.wait(
+            until.elementLocated(By.id('flash')), 
+            10000 // Timeout de 10 segundos
+        );
+
+        let mensagemTexto = await elementoMensagem.getText();
+        
+        // 6. Verificação (Assertion)
+        if (mensagemTexto.includes(MENSAGEM_SUCESSO_ESPERADA)) {
+            console.log('✅ Teste de Login PASSOU!');
+        } else {
+            console.log(`❌ Teste de Login FALHOU! Mensagem recebida: "${mensagemTexto}"`);
+        }
+
+    } catch (error) {
+        console.error('Ocorreu um erro no teste de login:', error);
+    } finally {
+        await driver.quit();
+    }
+}
+
+testeDeLogin();
+
+Boas Práticas e Próximos Passos
+Page Object Model (POM): Para projetos maiores, separe a lógica de localização de elementos e interações da lógica de teste. Crie uma "classe" para cada página da sua aplicação. Isso torna os testes mais limpos e fáceis de manter.
+Exemplo de estrutura POM:
+
+// LoginPage.js
+class LoginPage {
+    constructor(driver) {
+        this.driver = driver;
+        this.userField = By.id('username');
+        this.passField = By.id('password');
+        this.loginButton = By.css('button[type="submit"]');
+    }
+    async login(user, pass) {
+        await this.driver.findElement(this.userField).sendKeys(user);
+        await this.driver.findElement(this.passField).sendKeys(pass);
+        await this.driver.findElement(this.loginButton).click();
+    }
+}
+module.exports = LoginPage;
+
+Frameworks de Teste: Use um framework como Mocha ou Jest. Eles fornecem uma estrutura melhor para organizar seus testes (describe, it), ferramentas de assertion (verificação) mais robustas (expect, assert) e relatórios de execução mais claros.
+Integração Contínua (CI/CD): Integre seus testes automatizados a pipelines de CI/CD (como GitHub Actions, Jenkins, GitLab CI) para que eles rodem automaticamente toda vez que o código for alterado.
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+Caso ja tenha instalado no computador o pacote npm e o node, necessario instalar
+em seguida o pacote selenium com o comando a baixo:
+
+* npm install selenium-webdriver
+
+depois de instalar o selenium na pasta onde se encontra os arquivos pra teste, 
+necessario selecionalo utilizando o comando a baixo:
+
+* node nome_Do_Arquivo.js
+
+Nesse teste o cenario de teste vai ser local, logo a operacao necessita 
+dentro do codigo rodar as operacoes para o funcionamento

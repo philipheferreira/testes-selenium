@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página de Teste Local</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { padding: 8px; margin: 5px; }
+        #resultado { margin-top: 15px; font-weight: bold; color: green; }
+    </style>
+</head>
+<body>
+
+    <h1>Formulário de Teste Local</h1>
+
+    <label for="campo_nome">Digite seu nome:</label>
+    <input type="text" id="campo_nome" placeholder="Ex: Maria">
+
+    <button id="botao_enviar">Enviar Saudação</button>
+
+    <div id="resultado"></div>
+
+    <script>
+        // Lógica simples para o nosso teste
+        document.getElementById('botao_enviar').addEventListener('click', function() {
+            const nome = document.getElementById('campo_nome').value;
+            const resultadoDiv = document.getElementById('resultado');
+            
+            if (nome) {
+                resultadoDiv.innerText = `Olá, ${nome}! Seja bem-vinda(o).`;
+                resultadoDiv.style.color = 'green';
+            } else {
+                resultadoDiv.innerText = 'Por favor, digite um nome.';
+                resultadoDiv.style.color = 'red';
+            }
+        });
+    </script>
+
+</body>
+</html>
