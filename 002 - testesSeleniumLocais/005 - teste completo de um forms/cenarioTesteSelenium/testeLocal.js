@@ -4,6 +4,24 @@ const path = require('path');
 // URL do nosso arquivo local
 const URL = 'file://' + path.resolve(__dirname, '../formulario.html');
 
+// ===================================================================
+// FUNÇÃO AUXILIAR PARA DIGITAÇÃO LENTA
+// ===================================================================
+/**
+ * Digita um texto em um elemento de forma lenta, caractere por caractere.
+ * @param {WebElement} element - O elemento onde o texto será digitado.
+ * @param {string} text - O texto a ser digitado.
+ * @param {number} [delay=100] - O tempo de espera em milissegundos entre cada caractere.
+ */
+async function typeSlowly(driver, element, text, delay = 100) {
+    for (const char of text) {
+        await element.sendKeys(char);
+        await driver.sleep(delay);
+    }
+}
+// ===================================================================
+
+
 // Função auxiliar para esperar e obter o texto da mensagem
 async function obterMensagem(driver) {
     const elementoMensagem = await driver.wait(until.elementLocated(By.id('mensagem')), 5000);
@@ -16,15 +34,24 @@ async function testarEnvioComSucesso(driver) {
     console.log("\n--- Cenário 1: Envio com Sucesso ---");
     await driver.get(URL); // Garante que a página está "limpa"
 
-    await driver.findElement(By.id('nome')).sendKeys('João da Silva');
-    await driver.findElement(By.id('email')).sendKeys('joao.silva@example.com');
-    await driver.findElement(By.id('senha')).sendKeys('senha12345');
+    // Usando a função de digitação lenta
+    const nomeElement = await driver.findElement(By.id('nome'));
+    await typeSlowly(driver, nomeElement, 'João da Silva');
+
+    const emailElement = await driver.findElement(By.id('email'));
+    await typeSlowly(driver, emailElement, 'joao.silva@example.com');
+
+    const senhaElement = await driver.findElement(By.id('senha'));
+    await typeSlowly(driver, senhaElement, 'senha12345');
+
     await driver.findElement(By.id('masculino')).click();
-    await driver.findElement(By.id('cidade')).sendKeys('São Paulo'); // Pode usar sendKeys em selects
+    await driver.findElement(By.id('cidade')).sendKeys('São Paulo'); // Select pode usar sendKeys normal
     await driver.findElement(By.id('termos')).click();
     
     await driver.findElement(By.css('button[type="submit"]')).click();
-    
+
+    await driver.sleep(3000);
+
     const mensagem = await obterMensagem(driver);
     if (mensagem.includes('Sucesso! Cadastro de João da Silva')) {
         console.log('✅ PASSOU: Mensagem de sucesso exibida corretamente.');
@@ -38,13 +65,19 @@ async function testarFalhaNomeVazio(driver) {
     await driver.get(URL);
 
     // Preenche tudo menos o nome
-    await driver.findElement(By.id('email')).sendKeys('joao.silva@example.com');
-    await driver.findElement(By.id('senha')).sendKeys('senha12345');
+    const emailElement = await driver.findElement(By.id('email'));
+    await typeSlowly(driver, emailElement, 'joao.silva@example.com');
+
+    const senhaElement = await driver.findElement(By.id('senha'));
+    await typeSlowly(driver, senhaElement, 'senha12345');
+
     await driver.findElement(By.id('masculino')).click();
     await driver.findElement(By.id('cidade')).sendKeys('São Paulo');
     await driver.findElement(By.id('termos')).click();
 
     await driver.findElement(By.css('button[type="submit"]')).click();
+
+    await driver.sleep(3000);
 
     const mensagem = await obterMensagem(driver);
     if (mensagem.includes('Erro: O campo Nome é obrigatório.')) {
@@ -58,14 +91,22 @@ async function testarFalhaSenhaCurta(driver) {
     console.log("\n--- Cenário 3: Falha - Senha Curta ---");
     await driver.get(URL);
     
-    await driver.findElement(By.id('nome')).sendKeys('João da Silva');
-    await driver.findElement(By.id('email')).sendKeys('joao.silva@example.com');
-    await driver.findElement(By.id('senha')).sendKeys('123'); // Senha curta
+    const nomeElement = await driver.findElement(By.id('nome'));
+    await typeSlowly(driver, nomeElement, 'João da Silva');
+
+    const emailElement = await driver.findElement(By.id('email'));
+    await typeSlowly(driver, emailElement, 'joao.silva@example.com');
+    
+    const senhaElement = await driver.findElement(By.id('senha'));
+    await typeSlowly(driver, senhaElement, '123'); // Senha curta
+
     await driver.findElement(By.id('masculino')).click();
     await driver.findElement(By.id('cidade')).sendKeys('São Paulo');
     await driver.findElement(By.id('termos')).click();
 
     await driver.findElement(By.css('button[type="submit"]')).click();
+
+    await driver.sleep(3000);
 
     const mensagem = await obterMensagem(driver);
     if (mensagem.includes('Erro: A senha deve ter pelo menos 8 caracteres.')) {
@@ -79,14 +120,22 @@ async function testarFalhaTermosNaoAceitos(driver) {
     console.log("\n--- Cenário 4: Falha - Termos Não Aceitos ---");
     await driver.get(URL);
 
-    await driver.findElement(By.id('nome')).sendKeys('João da Silva');
-    await driver.findElement(By.id('email')).sendKeys('joao.silva@example.com');
-    await driver.findElement(By.id('senha')).sendKeys('senha12345');
+    const nomeElement = await driver.findElement(By.id('nome'));
+    await typeSlowly(driver, nomeElement, 'João da Silva');
+
+    const emailElement = await driver.findElement(By.id('email'));
+    await typeSlowly(driver, emailElement, 'joao.silva@example.com');
+
+    const senhaElement = await driver.findElement(By.id('senha'));
+    await typeSlowly(driver, senhaElement, 'senha12345');
+
     await driver.findElement(By.id('masculino')).click();
     await driver.findElement(By.id('cidade')).sendKeys('São Paulo');
     // Não clica nos termos
 
     await driver.findElement(By.css('button[type="submit"]')).click();
+
+    await driver.sleep(3000);
 
     const mensagem = await obterMensagem(driver);
     if (mensagem.includes('Erro: Você deve aceitar os termos de uso.')) {
@@ -100,7 +149,7 @@ async function testarFalhaTermosNaoAceitos(driver) {
 // --- Função Principal que Executa Todos os Testes ---
 async function executarTodosOsTestes() {
     let driver = await new Builder().forBrowser('chrome').build();
-    console.log('Iniciando a suíte de testes do formulário...');
+    console.log('Iniciando a suíte de testes do formulário (com digitação lenta)...');
 
     try {
         await testarEnvioComSucesso(driver);
